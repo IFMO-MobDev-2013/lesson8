@@ -37,7 +37,7 @@ public class MyActivity extends Activity {
             @Override
             public void afterTextChanged(Editable editable) {
                 String word = editable.toString();
-                Cursor cursor = resolver.query(MY_URI_NOTES, new String[]{"_id", "word"}, "word=?", new String[]{word}, "count asc");
+                Cursor cursor = resolver.query(MY_URI_NOTES, new String[]{"_id", "word", "count"}, "word LIKE '"+ word +"%'", null, "count desc");
                 ((ListView)findViewById(R.id.listView)).setAdapter(new SimpleCursorAdapter(getBaseContext(), R.layout.simple_row,
                         cursor, new String[]{"word"}, new int[]{R.id.textView}, 0));
             }
