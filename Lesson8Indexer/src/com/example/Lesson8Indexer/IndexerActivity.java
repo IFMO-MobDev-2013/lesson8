@@ -85,12 +85,26 @@ public class IndexerActivity extends Activity {
         }
         cursor.close();
         Enumeration<String> enumeration = dictionary.keys();
+        int min = -1;
+        int max = -1;
+        String maxWord = "NO_SUCH_WORD";
+        String minWord = "NO_SUCH_WORD";
         while (enumeration.hasMoreElements()) {
             s = enumeration.nextElement();
             Integer integer = dictionary.get(s);
+            if ((max == -1) || (max < integer)) {
+                max = integer;
+                maxWord = s;
+            }
+            if ((min == -1) || (min > integer)) {
+                min = integer;
+                minWord = s;
+            }
             adapter.add("Word = \"" + s + "\", count = " + integer + ".");
             adapter.notifyDataSetChanged();
         }
+        Log.w("maxWord", "Word with max count is \"" + maxWord + "\", count = " + max + ".");
+        Log.w("minWord", "Word with min count is \"" + minWord + "\", count = " + min + ".");
         successView.setText("The notes has been indexed.");
         informationView.setText(notesCount + " notes have been indexed, " + wordsCount + " different words in these notes.");
     }
