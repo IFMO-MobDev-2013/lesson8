@@ -31,7 +31,7 @@ public class IndexerProvider extends ContentProvider{
     @Override
     public Cursor query(Uri uri, String[] strings, String s, String[] strings2, String s2) {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        return database.query("indexes", strings, s, strings2, null, null, null);
+        return database.query("indexes", strings, s, strings2, null, null, s2);
     }
 
     @Override
