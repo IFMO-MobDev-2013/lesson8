@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Nottingham</string>
+    <string name="title_activity_note">NoteActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="new_note">Input text here...</string>
+
+</resources>
