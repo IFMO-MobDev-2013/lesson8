@@ -1,6 +1,8 @@
 package com.example.Indexer;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,6 +24,12 @@ public class MyActivity extends Activity {
     public static final Uri URI_NOTES = Uri.withAppendedPath(CONTENT_URI, STRUCTURE_NOTES);
 
     public static final String T_NOTES_TEXT = "text";
+
+    public static final String STRUCTURE_INDEXES = "indexes";
+    public static final String AUTHORITY_IND = "com.example.loboda.provider";
+
+    private static final Uri MY_CONTENT_URI = Uri.parse("content://" + AUTHORITY_IND);
+    public static final Uri MY_URI_NOTES = Uri.withAppendedPath(MY_CONTENT_URI, STRUCTURE_INDEXES);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,10 +53,20 @@ public class MyActivity extends Activity {
         }
         Set<String> keySet = words.keySet();
         Iterator<String> it = keySet.iterator();
+        ContentResolver resolver = getContentResolver();
+
+        resolver.delete(MY_URI_NOTES, null, null);
         while(it.hasNext()){
             String key = it.next();
-            Log.w("logg", key + ": " + words.get(key));
+            ContentValues values = new ContentValues();
+            values.put("word", key);
+            values.put("count", words.get(key));
+            resolver.insert(MY_URI_NOTES, values);
         }
+        Cursor records = resolver.query(MY_URI_NOTES, null, null, null, null);
         Toast.makeText(getApplicationContext(), "All indexed", Toast.LENGTH_LONG).show();
+        while(records.moveToNext()){
+            Log.w("records", records.getString(records.getColumnIndex("word")) + ": " + records.getInt(records.getColumnIndex("count")));
+        }
     }
 }
