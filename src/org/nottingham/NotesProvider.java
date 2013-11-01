@@ -18,49 +18,51 @@ public class NotesProvider extends ContentProvider {
     private static final String TAG = NotesProvider.class.getSimpleName();
 
     public static final String STRUCTURE_NOTES = "notes";
-    public static final String AUTHORITY = "org.nottingham.provider";
-    
+    public static final String AUTHORITY       = "org.nottingham.provider";
+
     private static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
-    public static final Uri URI_NOTES = Uri.withAppendedPath(CONTENT_URI, STRUCTURE_NOTES);
-    
-    private static final String  DB_NAME = "Inventory";
-    private static final int     DB_VERSION = 1;
-    private static final String  T_NOTES = "Notes";
-    
-    public static final String T_NOTES_ID = "note_id";
-    public static final String T_NOTES_TEXT = "text";
+    public static final  Uri URI_NOTES   = Uri.withAppendedPath(CONTENT_URI, STRUCTURE_NOTES);
+
+    private static final String DB_NAME    = "Inventory";
+    private static final int    DB_VERSION = 1;
+    private static final String T_NOTES    = "Notes";
+
+    public static final String T_NOTES_ID      = "note_id";
+    public static final String T_NOTES_TEXT    = "text";
     public static final String T_NOTES_UPDATED = "updated";
 
-    private static final String SQL_DB_CREATE = 
+    private static final String SQL_DB_CREATE =
             "CREATE TABLE if not exists " + T_NOTES + " (" +
             T_NOTES_ID + " integer PRIMARY KEY autoincrement," +
             T_NOTES_TEXT + "," +
             T_NOTES_UPDATED + "," +
-            " UNIQUE (" + T_NOTES_TEXT +"));";
-    private static final String SQL_DB_DROP = "DROP TABLE IF EXISTS " + T_NOTES;
-     
+            " UNIQUE (" + T_NOTES_TEXT + "));";
+    private static final String SQL_DB_DROP   = "DROP TABLE IF EXISTS " + T_NOTES;
+
     private static final int MATCH_ALLNOTES = 1;
-    private static final int MATCH_NOTE = 2;
-    
+    private static final int MATCH_NOTE     = 2;
+
     // a content URI pattern matches content URIs using wildcard characters:
     // *: Matches a string of any valid characters of any length.
     // #: Matches a string of numeric characters of any length.
     private static final UriMatcher uriMatcher;
+
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(AUTHORITY, STRUCTURE_NOTES, MATCH_ALLNOTES);
         uriMatcher.addURI(AUTHORITY, STRUCTURE_NOTES + "/#", MATCH_NOTE);
     }
-    
+
     //------
     private SQLiteOpenHelper dbHelper;
-    
+
     @Override
     public boolean onCreate() {
         dbHelper = new SQLiteOpenHelper(getContext(), DB_NAME, null, DB_VERSION) {
             public void onCreate(SQLiteDatabase db) {
-                db.execSQL(SQL_DB_CREATE);    
+                db.execSQL(SQL_DB_CREATE);
             }
+
             public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
                 Log.w(TAG, "onUpgrade() old: " + oldVersion + " new: " + newVersion);
                 db.execSQL(SQL_DB_DROP);
@@ -74,15 +76,15 @@ public class NotesProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         switch (uriMatcher.match(uri)) {
-            case MATCH_ALLNOTES :
+            case MATCH_ALLNOTES:
                 return "vnd.android.cursor.dir/vnd.org.nottingham.contentprovider.notes";
-            case MATCH_NOTE :
+            case MATCH_NOTE:
                 return "vnd.android.cursor.item/vnd.org.nottingham.contentprovider.notes";
-            default :
+            default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
     }
-    
+
     // The query() method must return a Cursor object, or if it fails,
     // throw an Exception. If you are using an SQLite database as your data storage,
     // you can simply return the Cursor returned by one of the query() methods of the
@@ -96,16 +98,16 @@ public class NotesProvider extends ContentProvider {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
         switch (uriMatcher.match(uri)) {
-            case MATCH_ALLNOTES :
+            case MATCH_ALLNOTES:
                 queryBuilder.setTables(T_NOTES);
                 break;
-            case MATCH_NOTE :
+            case MATCH_NOTE:
                 queryBuilder.setTables(T_NOTES);
                 String id = uri.getLastPathSegment();
                 queryBuilder.appendWhere(T_NOTES_ID + "=");
                 queryBuilder.appendWhereEscapeString(id);
                 break;
-            default :
+            default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
 
@@ -114,7 +116,7 @@ public class NotesProvider extends ContentProvider {
         // if something is added after query() and notifyChange() is called, cursor will be recalculated
         // getContentResolver().notifyChange(uri, null);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
-        
+
         return cursor;
 
     }
@@ -128,17 +130,17 @@ public class NotesProvider extends ContentProvider {
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         switch (uriMatcher.match(uri)) {
-            case MATCH_ALLNOTES :
+            case MATCH_ALLNOTES:
                 //do nothing
                 break;
-            default :
+            default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
         long id = db.insert(T_NOTES, null, values);
         getContext().getContentResolver().notifyChange(uri, null);
         return Uri.parse(CONTENT_URI + "/" + id);
     }
-    
+
     // The update method() is same as delete() which updates multiple rows
     // based on the selection or a single row if the row id is provided. The
     // update method returns the number of updated rows.
@@ -146,14 +148,14 @@ public class NotesProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         switch (uriMatcher.match(uri)) {
-            case MATCH_ALLNOTES :
+            case MATCH_ALLNOTES:
                 //do nothing
                 break;
-            case MATCH_NOTE :
+            case MATCH_NOTE:
                 String id = uri.getPathSegments().get(1);
                 selection = T_NOTES_ID + "=" + id + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
                 break;
-            default :
+            default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
         int updateCount = db.update(T_NOTES, values, selection, selectionArgs);
@@ -170,14 +172,14 @@ public class NotesProvider extends ContentProvider {
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         switch (uriMatcher.match(uri)) {
-            case MATCH_ALLNOTES :
+            case MATCH_ALLNOTES:
                 //do nothing
                 break;
-            case MATCH_NOTE :
+            case MATCH_NOTE:
                 String id = uri.getPathSegments().get(1);
                 selection = T_NOTES_ID + "=" + id + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
                 break;
-            default :
+            default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
         int deleteCount = db.delete(T_NOTES, selection, selectionArgs);
