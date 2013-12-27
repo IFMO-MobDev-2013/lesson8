@@ -50,7 +50,9 @@ public class NoteActivity extends Activity {
                 sb.append("[").append(c.getColumnName(i)).append("] : ")
                     .append(c.getString(i)).append(" ");
             }
+
             Log.w(TAG, "printData() " + c.getPosition() + ": " + sb.toString());
+
         }
     }
     
