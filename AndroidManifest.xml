@@ -1,31 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.nottingham"
-    android:versionCode="1"
-    android:versionName="1.0" >
+          package="org.nottingham"
+          android:versionCode="1"
+          android:versionName="1.0">
 
     <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="17" />
+            android:minSdkVersion="8"
+            android:targetSdkVersion="17"/>
 
     <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+            android:allowBackup="true"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme">
         <activity
-            android:name="org.nottingham.NoteActivity"
-            android:label="@string/title_activity_note" >
+                android:name="org.nottingham.NoteActivity"
+                android:label="@string/title_activity_note">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
         <provider
-            android:name="org.nottingham.NotesProvider"
-            android:authorities="org.nottingham.provider">
+                android:name="org.nottingham.NotesProvider"
+                android:authorities="org.nottingham.provider"
+                android:exported="true">
         </provider>
     </application>
 
